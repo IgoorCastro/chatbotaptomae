@@ -1,4 +1,4 @@
 console.log("Iniciando servidor principal...");
 
-require("./api/index.js");
+require("./API/index.js");
 require("./chatbot.js");
