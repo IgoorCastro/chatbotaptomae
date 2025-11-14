@@ -1,24 +1,27 @@
-const express = require("express");
-const axios = require("axios");
-const ical = require("ical.js");
-const cors = require("cors");
+const express = require('express');
+const axios = require('axios');
+const ical = require('ical.js');
 
 const app = express();
+
+// -------- Tratamento de erros ---------
+const cors = require("cors"); // Use para tratar erros
 app.use(cors());
 
+const reservedDates = [{}]; // sumary, startDate, endDate, description
 const apartamentos = [
   {
     apto: "10 pessoas",
     links: {
       airbnb: "https://www.airbnb.com.br/calendar/ical/30253226.ics?s=480794fc2ea7ba9e80497a266e2f152d",
-      booking: "https://ical.booking.com/v1/export?t=6a5ab3b4-98a7-4db6-abaf-cbb1d843586f"
+      booking: "https://ical.booking.com/v1/export?t=8ea6e7a7-1265-4407-a834-8f7cbe495546"
     }
   },
   {
     apto: "8 pessoas",
     links: {
       airbnb: "https://www.airbnb.com.br/calendar/ical/892823308596337264.ics?s=812b266bcb6c0a40c209a94baed52d66",
-      booking: "https://ical.booking.com/v1/export?t=27bed773-7e5f-423c-acc9-8e431710c041"
+      booking: "https://ical.booking.com/v1/export?t=aedde3e6-7d39-4e91-a34f-7ebd95d53a07"
     }
   },
   {
@@ -30,41 +33,263 @@ const apartamentos = [
   }
 ];
 
-const fetchCalendar = async (url) => {
-  const resp = [];
-  try {
-    const response = await axios.get(url);
-    const data = response.data;
-    const jcalData = ical.parse(data);
-    const comp = new ical.Component(jcalData);
+// Rota apto 10 pessoas
+app.get('/10Pessoas', async (req, res) => {
+    console.log('~~ 10 Pessoas Calendar ~~\n');
+    let urlAirbnb = 'https://www.airbnb.com.br/calendar/ical/30253226.ics?s=480794fc2ea7ba9e80497a266e2f152d';
+    const respAirbnb = [];
 
-    comp.getAllSubcomponents("vevent").forEach((event) => {
-      resp.push({
-        summary: event.getFirstPropertyValue("summary"),
-        startDate: event.getFirstPropertyValue("dtstart").toJSDate(),
-        endDate: event.getFirstPropertyValue("dtend").toJSDate()
-      });
-    });
-  } catch (err) {
-    console.error("Erro ao buscar ICS:", err.message);
-  }
-  return resp;
-};
+    console.log('>Airbnb: Iniciando requisição');
+    await axios.get(apartamentos[0].links.airbnb)
+        .then(response => {
+            console.log('>Airbnb: Requisição completa...');
+            const data = response.data;
 
-app.get("/:apto", async (req, res) => {
-  const { apto } = req.params;
-  const indexMap = { "10Pessoas": 0, "8Pessoas": 1, "7Pessoas": 2 };
-  const idx = indexMap[apto];
+            const jcalData = ical.parse(data); // Parseiar os dados com ical.js
 
-  if (idx === undefined) return res.status(400).send("Apartamento inválido");
+            const comp = new ical.Component(jcalData); // Acessar os componentes do calendário (vcalendar)
 
-  const airbnb = await fetchCalendar(apartamentos[idx].links.airbnb);
-  const booking = await fetchCalendar(apartamentos[idx].links.booking);
+            console.log('Iniciando iteração\n');
+            
+            comp.getAllSubcomponents('vevent').forEach(event => { // Itera sobre os eventos (vevent) dentro do calendário
+                const currentDate = {};
+                // Acessa as propriedades do evento
+                currentDate.summary = event.getFirstPropertyValue('summary');
+                currentDate.startDate = event.getFirstPropertyValue('dtstart').toJSDate();
+                currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
-  res.send([...airbnb, ...booking]);
+                // Exibe as informações do evento no console
+                console.log('Summary:', currentDate.summary);
+                console.log('Start Date:', currentDate.startDate);
+                console.log('End Date:', currentDate.endDate);
+                console.log('-------------------------');
+                respAirbnb.push(currentDate);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao buscar ou parsear o arquivo ICS:', error);
+            res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
+        });
+
+
+    let urlBooking = 'https://ical.booking.com/v1/export?t=8ea6e7a7-1265-4407-a834-8f7cbe495546';
+    const respBooking = [];
+    console.log('>Booking: Iniciando requisição');
+    await axios.get(apartamentos[0].links.airbnb)
+        .then(response => {
+            console.log('>Booking: Requisição completa...');
+            // Extrai o texto da resposta
+            const data = response.data;
+
+            // Parseia os dados com ical.js
+            const jcalData = ical.parse(data);
+
+            // Acessa os componentes do calendário (vcalendar)
+            const comp = new ical.Component(jcalData);
+
+            console.log('Iniciando iteração\n');
+            // Itera sobre os eventos (vevent) dentro do calendário
+            comp.getAllSubcomponents('vevent').forEach(event => {
+                const currentDate = {};
+                // Acessa as propriedades do evento
+                currentDate.summary = event.getFirstPropertyValue('summary');
+                currentDate.startDate = event.getFirstPropertyValue('dtstart').toJSDate();
+                currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
+
+                // Exibe as informações do evento no console
+                console.log('Summary:', currentDate.summary);
+                console.log('Start Date:', currentDate.startDate);
+                console.log('End Date:', currentDate.endDate);
+                console.log('-------------------------');
+                respBooking.push(currentDate);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao buscar ou parsear o arquivo ICS:', error);
+            res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
+        });
+
+    console.log('\n~~ Fim ~~\n\n');
+
+    const resp = [...respAirbnb, ...respBooking]
+    res.send(resp);
 });
 
-const PORT = process.env.PORT || 3000;
+// Rota apto 8 pessoas
+app.get('/8Pessoas', async (req, res) => {
+    console.log('~~ 8 Pessoas Calendar ~~\n');
+    let urlAirbnb = 'https://www.airbnb.com.br/calendar/ical/892823308596337264.ics?s=812b266bcb6c0a40c209a94baed52d66';
+    const respAirbnb = [];
+
+    console.log('>Airbnb: Iniciando requisição');
+    await axios.get(apartamentos[1].links.airbnb)
+        .then(response => {
+            console.log('> Requisição completa...');
+            // Extrai o texto da resposta
+            const data = response.data;
+
+            // Parseia os dados com ical.js
+            const jcalData = ical.parse(data);
+
+            // Acessa os componentes do calendário (vcalendar)
+            const comp = new ical.Component(jcalData);
+
+            console.log('Iniciando iteração\n');
+            // Itera sobre os eventos (vevent) dentro do calendário
+            comp.getAllSubcomponents('vevent').forEach(event => {
+                const currentDate = {};
+                // Acessa as propriedades do evento
+                currentDate.summary = event.getFirstPropertyValue('summary');
+                currentDate.startDate = event.getFirstPropertyValue('dtstart').toJSDate();
+                currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
+
+                // Exibe as informações do evento no console
+                console.log('Summary:', currentDate.summary);
+                console.log('Start Date:', currentDate.startDate);
+                console.log('End Date:', currentDate.endDate);
+                console.log('-------------------------');
+                respAirbnb.push(currentDate);
+            });
+            console.log('\n~~ Fim ~~\n\n');
+        })
+        .catch(error => {
+            console.error('Erro ao buscar ou parsear o arquivo ICS:', error);
+            res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
+        });
+
+    let urlBooking = 'https://ical.booking.com/v1/export?t=aedde3e6-7d39-4e91-a34f-7ebd95d53a07';
+    const respBooking = [];
+    console.log('>Booking: Iniciando requisição');
+    await axios.get(apartamentos[1].links.airbnb)
+        .then(response => {
+            console.log('>Booking: Requisição completa...');
+            // Extrai o texto da resposta
+            const data = response.data;
+
+            // Parseia os dados com ical.js
+            const jcalData = ical.parse(data);
+
+            // Acessa os componentes do calendário (vcalendar)
+            const comp = new ical.Component(jcalData);
+
+            console.log('Iniciando iteração\n');
+            // Itera sobre os eventos (vevent) dentro do calendário
+            comp.getAllSubcomponents('vevent').forEach(event => {
+                const currentDate = {};
+                // Acessa as propriedades do evento
+                currentDate.summary = event.getFirstPropertyValue('summary');
+                currentDate.startDate = event.getFirstPropertyValue('dtstart').toJSDate();
+                currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
+
+                // Exibe as informações do evento no console
+                console.log('Summary:', currentDate.summary);
+                console.log('Start Date:', currentDate.startDate);
+                console.log('End Date:', currentDate.endDate);
+                console.log('-------------------------');
+                respBooking.push(currentDate);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao buscar ou parsear o arquivo ICS:', error);
+            res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
+        });
+
+    console.log('\n~~ Fim ~~\n\n');
+
+    const resp = [...respAirbnb, ...respBooking]
+    res.send(resp);
+});
+
+// Rota apto 7 pessoas
+app.get('/7Pessoas', async (req, res) => {
+    console.log('~~ 7 Pessoas Calendar ~~\n');
+    let urlAirbnb = 'https://www.airbnb.com.br/calendar/ical/30335316.ics?s=e27d68518aaa7b62d84e1381cdebfd66';
+    const respAirbnb = [];
+
+    console.log('> Iniciando requisição');
+    await axios.get(apartamentos[2].links.airbnb)
+        .then(response => {
+            console.log('> Requisição completa...');
+            // Extrai o texto da resposta
+            const data = response.data;
+
+            // Parseia os dados com ical.js
+            const jcalData = ical.parse(data);
+
+            // Acessa os componentes do calendário (vcalendar)
+            const comp = new ical.Component(jcalData);
+
+            console.log('Iniciando iteração\n');
+            // Itera sobre os eventos (vevent) dentro do calendário
+            comp.getAllSubcomponents('vevent').forEach(event => {
+                const currentDate = {};
+                // Acessa as propriedades do evento
+                currentDate.summary = event.getFirstPropertyValue('summary');
+                currentDate.startDate = event.getFirstPropertyValue('dtstart').toJSDate();
+                currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
+
+                // Exibe as informações do evento no console
+                console.log('Summary:', currentDate.summary);
+                console.log('Start Date:', currentDate.startDate);
+                console.log('End Date:', currentDate.endDate);
+                console.log('-------------------------');
+                respAirbnb.push(currentDate);
+            });
+            console.log('\n~~ Fim ~~\n\n');
+        })
+        .catch(error => {
+            console.error('Erro ao buscar ou parsear o arquivo ICS:', error);
+            res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
+        });
+
+
+    let urlBooking = 'https://ical.booking.com/v1/export?t=d1bb0a9d-3041-41f9-8eac-a7c6d70da5ec';
+    const respBooking = [];
+    console.log('>Booking: Iniciando requisição');
+    await axios.get(apartamentos[2].links.booking)
+        .then(response => {
+            console.log('>Booking: Requisição completa...');
+            // Extrai o texto da resposta
+            const data = response.data;
+
+            // Parseia os dados com ical.js
+            const jcalData = ical.parse(data);
+
+            // Acessa os componentes do calendário (vcalendar)
+            const comp = new ical.Component(jcalData);
+
+            console.log('Iniciando iteração\n');
+            // Itera sobre os eventos (vevent) dentro do calendário
+            comp.getAllSubcomponents('vevent').forEach(event => {
+                const currentDate = {};
+                // Acessa as propriedades do evento
+                currentDate.summary = event.getFirstPropertyValue('summary');
+                currentDate.startDate = event.getFirstPropertyValue('dtstart').toJSDate();
+                currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
+
+                // Exibe as informações do evento no console
+                console.log('Summary:', currentDate.summary);
+                console.log('Start Date:', currentDate.startDate);
+                console.log('End Date:', currentDate.endDate);
+                console.log('-------------------------');
+                respBooking.push(currentDate);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao buscar ou parsear o arquivo ICS:', error);
+            res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
+        });
+
+    console.log('\n~~ Fim ~~\n\n');
+
+    const resp = [...respAirbnb, ...respBooking]
+    res.send(resp);
+});
+
+
+
+let PORT = 3001;
+// Iniciando o servidor
 app.listen(PORT, () => {
-  console.log(`API de calendário rodando em http://localhost:${PORT}`);
+    console.log(`\n>> Server Port: ${PORT}\n`);
 });
