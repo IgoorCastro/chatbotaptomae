@@ -1,10 +1,32 @@
 // leitor de qr code
 const qrcode = require("qrcode-terminal");
-const { Client } = require("whatsapp-web.js");
-const client = new Client();
+const { Client, LocalAuth  } = require("whatsapp-web.js");
+const fs = require('fs');
+
+// ======== SESSÃO ========
+// Carrega session.json se existir
+let sessionData = null;
+if (fs.existsSync('./session.json')) {
+    try {
+        sessionData = JSON.parse(fs.readFileSync('./session.json'));
+        console.log("Sessão carregada com sucesso.");
+    } catch (err) {
+        console.log("Erro ao carregar a sessão:", err);
+    }
+}
+
+
+const client = new Client({
+  authStrategy: new LocalAuth(),
+  puppeteer: {
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  }
+});
 
 client.on("qr", (qr) => qrcode.generate(qr, { small: true }));
 client.on("ready", () => console.log("Tudo certo! WhatsApp conectado."));
+
 client.initialize();
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
