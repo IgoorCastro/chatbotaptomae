@@ -64,7 +64,7 @@ app.get("/:apto", async (req, res) => {
   res.send([...airbnb, ...booking]);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`API de calendário rodando em http://localhost:${PORT}`);
 });
