@@ -147,7 +147,7 @@ client.on("message", async (msg) => {
   }
 
   if (
-    msg.body.match(/(dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola|bom|menu)/i) &&
+    msg.body.match(/(dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola|bom|menu|gostaria|Gostaria)/i) &&
     msg.from.endsWith("@c.us") &&
     !userState[userId]?.etapa
   ) {
