@@ -1,2 +1,3 @@
-2025/11/14-12:34:20.145 4a14 Creating DB C:\Users\Igor\Documents\VsCodeProjetos\Chatbot\.wwebjs_auth\session\Default\Service Worker\Database since it was missing.
-2025/11/14-12:34:20.150 4a14 Reusing MANIFEST C:\Users\Igor\Documents\VsCodeProjetos\Chatbot\.wwebjs_auth\session\Default\Service Worker\Database/MANIFEST-000001
+2025/11/14-12:51:37.445 309c Reusing MANIFEST C:\Users\Igor\Documents\VsCodeProjetos\Chatbot\.wwebjs_auth\session\Default\Service Worker\Database/MANIFEST-000001
+2025/11/14-12:51:37.445 309c Recovering log #3
+2025/11/14-12:51:37.446 309c Reusing old log C:\Users\Igor\Documents\VsCodeProjetos\Chatbot\.wwebjs_auth\session\Default\Service Worker\Database/000003.log 
