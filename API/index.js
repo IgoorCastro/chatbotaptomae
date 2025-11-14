@@ -57,10 +57,10 @@ app.get('/10Pessoas', async (req, res) => {
                 currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
                 // Exibe as informações do evento no console
-                console.log('Summary:', currentDate.summary);
-                console.log('Start Date:', currentDate.startDate);
-                console.log('End Date:', currentDate.endDate);
-                console.log('-------------------------');
+                // console.log('Summary:', currentDate.summary);
+                // console.log('Start Date:', currentDate.startDate);
+                // console.log('End Date:', currentDate.endDate);
+                // console.log('-------------------------');
                 respAirbnb.push(currentDate);
             });
         })
@@ -93,10 +93,10 @@ app.get('/10Pessoas', async (req, res) => {
                 currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
                 // Exibe as informações do evento no console
-                console.log('Summary:', currentDate.summary);
-                console.log('Start Date:', currentDate.startDate);
-                console.log('End Date:', currentDate.endDate);
-                console.log('-------------------------');
+                // console.log('Summary:', currentDate.summary);
+                // console.log('Start Date:', currentDate.startDate);
+                // console.log('End Date:', currentDate.endDate);
+                // console.log('-------------------------');
                 respBooking.push(currentDate);
             });
         })
@@ -139,10 +139,10 @@ app.get('/8Pessoas', async (req, res) => {
                 currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
                 // Exibe as informações do evento no console
-                console.log('Summary:', currentDate.summary);
-                console.log('Start Date:', currentDate.startDate);
-                console.log('End Date:', currentDate.endDate);
-                console.log('-------------------------');
+                // console.log('Summary:', currentDate.summary);
+                // console.log('Start Date:', currentDate.startDate);
+                // console.log('End Date:', currentDate.endDate);
+                // console.log('-------------------------');
                 respAirbnb.push(currentDate);
             });
             console.log('\n~~ Fim ~~\n\n');
@@ -176,10 +176,10 @@ app.get('/8Pessoas', async (req, res) => {
                 currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
                 // Exibe as informações do evento no console
-                console.log('Summary:', currentDate.summary);
-                console.log('Start Date:', currentDate.startDate);
-                console.log('End Date:', currentDate.endDate);
-                console.log('-------------------------');
+                // console.log('Summary:', currentDate.summary);
+                // console.log('Start Date:', currentDate.startDate);
+                // console.log('End Date:', currentDate.endDate);
+                // console.log('-------------------------');
                 respBooking.push(currentDate);
             });
         })
@@ -222,10 +222,10 @@ app.get('/7Pessoas', async (req, res) => {
                 currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
                 // Exibe as informações do evento no console
-                console.log('Summary:', currentDate.summary);
-                console.log('Start Date:', currentDate.startDate);
-                console.log('End Date:', currentDate.endDate);
-                console.log('-------------------------');
+                // console.log('Summary:', currentDate.summary);
+                // console.log('Start Date:', currentDate.startDate);
+                // console.log('End Date:', currentDate.endDate);
+                // console.log('-------------------------');
                 respAirbnb.push(currentDate);
             });
             console.log('\n~~ Fim ~~\n\n');
@@ -259,10 +259,10 @@ app.get('/7Pessoas', async (req, res) => {
                 currentDate.endDate = event.getFirstPropertyValue('dtend').toJSDate();
 
                 // Exibe as informações do evento no console
-                console.log('Summary:', currentDate.summary);
-                console.log('Start Date:', currentDate.startDate);
-                console.log('End Date:', currentDate.endDate);
-                console.log('-------------------------');
+                // console.log('Summary:', currentDate.summary);
+                // console.log('Start Date:', currentDate.startDate);
+                // console.log('End Date:', currentDate.endDate);
+                // console.log('-------------------------');
                 respBooking.push(currentDate);
             });
         })

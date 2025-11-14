@@ -5,7 +5,6 @@ const fs = require('fs');
 
 // ======== SESSÃO ========
 // Carrega session.json se existir
-let sessionData = null;
 if (fs.existsSync('./session.json')) {
     try {
         sessionData = JSON.parse(fs.readFileSync('./session.json'));
@@ -109,12 +108,10 @@ const dataComparador = async (date) => { // verefica a data pesquisada no calend
 
   return data.map(item => { // verificar se a data ta disponivel em todos calendarios
     const test = item.data.some((date) => {      
-      console.log(`date.SD: ${date.startDate}\ndate.ED: ${date.endDate} --`);
       const sData = normalizarData(date.startDate);
       const eData = normalizarData(date.endDate);
       return tData >= sData && tData <= eData;
     })
-    console.log(`titulo: ${item.titulo}, disponibilidade: ${test}`);
     return { titulo: item.titulo, disponibilidade: test, valor: item.valor };
     // return test
     //   ? `${item.titulo}: ❌ Já existe uma reserva para essa data.`
@@ -130,6 +127,7 @@ client.on("message", async (msg) => {
     const chat = await msg.getChat();
     const contact = await msg.getContact();
     const name = contact.pushname?.split(" ")[0] || "cliente";
+    console.log(`\n\n-- Cliente: ${name} --`);
     await delay(1500);
     await chat.sendStateTyping();
     await client.sendMessage(
