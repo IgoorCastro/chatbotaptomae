@@ -8,20 +8,19 @@ const app = express();
 const cors = require("cors"); // Use para tratar erros
 app.use(cors());
 
-const reservedDates = [{}]; // sumary, startDate, endDate, description
 const apartamentos = [
   {
     apto: "10 pessoas",
     links: {
       airbnb: "https://www.airbnb.com.br/calendar/ical/30253226.ics?s=480794fc2ea7ba9e80497a266e2f152d",
-      booking: "https://ical.booking.com/v1/export?t=8ea6e7a7-1265-4407-a834-8f7cbe495546"
+      booking: "https://ical.booking.com/v1/export?t=6a5ab3b4-98a7-4db6-abaf-cbb1d843586f"
     }
   },
   {
     apto: "8 pessoas",
     links: {
       airbnb: "https://www.airbnb.com.br/calendar/ical/892823308596337264.ics?s=812b266bcb6c0a40c209a94baed52d66",
-      booking: "https://ical.booking.com/v1/export?t=aedde3e6-7d39-4e91-a34f-7ebd95d53a07"
+      booking: "https://ical.booking.com/v1/export?t=27bed773-7e5f-423c-acc9-8e431710c041"
     }
   },
   {
@@ -36,7 +35,6 @@ const apartamentos = [
 // Rota apto 10 pessoas
 app.get('/10Pessoas', async (req, res) => {
     console.log('~~ 10 Pessoas Calendar ~~\n');
-    let urlAirbnb = 'https://www.airbnb.com.br/calendar/ical/30253226.ics?s=480794fc2ea7ba9e80497a266e2f152d';
     const respAirbnb = [];
 
     console.log('>Airbnb: Iniciando requisição');
@@ -71,11 +69,9 @@ app.get('/10Pessoas', async (req, res) => {
             res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
         });
 
-
-    let urlBooking = 'https://ical.booking.com/v1/export?t=8ea6e7a7-1265-4407-a834-8f7cbe495546';
     const respBooking = [];
     console.log('>Booking: Iniciando requisição');
-    await axios.get(apartamentos[0].links.airbnb)
+    await axios.get(apartamentos[0].links.booking)
         .then(response => {
             console.log('>Booking: Requisição completa...');
             // Extrai o texto da resposta
@@ -118,7 +114,6 @@ app.get('/10Pessoas', async (req, res) => {
 // Rota apto 8 pessoas
 app.get('/8Pessoas', async (req, res) => {
     console.log('~~ 8 Pessoas Calendar ~~\n');
-    let urlAirbnb = 'https://www.airbnb.com.br/calendar/ical/892823308596337264.ics?s=812b266bcb6c0a40c209a94baed52d66';
     const respAirbnb = [];
 
     console.log('>Airbnb: Iniciando requisição');
@@ -157,10 +152,9 @@ app.get('/8Pessoas', async (req, res) => {
             res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
         });
 
-    let urlBooking = 'https://ical.booking.com/v1/export?t=aedde3e6-7d39-4e91-a34f-7ebd95d53a07';
     const respBooking = [];
     console.log('>Booking: Iniciando requisição');
-    await axios.get(apartamentos[1].links.airbnb)
+    await axios.get(apartamentos[1].links.booking)
         .then(response => {
             console.log('>Booking: Requisição completa...');
             // Extrai o texto da resposta
@@ -203,7 +197,6 @@ app.get('/8Pessoas', async (req, res) => {
 // Rota apto 7 pessoas
 app.get('/7Pessoas', async (req, res) => {
     console.log('~~ 7 Pessoas Calendar ~~\n');
-    let urlAirbnb = 'https://www.airbnb.com.br/calendar/ical/30335316.ics?s=e27d68518aaa7b62d84e1381cdebfd66';
     const respAirbnb = [];
 
     console.log('> Iniciando requisição');
@@ -242,8 +235,6 @@ app.get('/7Pessoas', async (req, res) => {
             res.status(500).send('Erro ao buscar ou parsear o arquivo ICS');
         });
 
-
-    let urlBooking = 'https://ical.booking.com/v1/export?t=d1bb0a9d-3041-41f9-8eac-a7c6d70da5ec';
     const respBooking = [];
     console.log('>Booking: Iniciando requisição');
     await axios.get(apartamentos[2].links.booking)
@@ -288,8 +279,8 @@ app.get('/7Pessoas', async (req, res) => {
 
 
 
-let PORT = 3001;
+let PORT = 1000;
 // Iniciando o servidor
 app.listen(PORT, () => {
-    console.log(`\n>> Server Port: ${PORT}\n`);
+    console.log(`\n>> API rodando na porta: ${PORT}\n`);
 });
