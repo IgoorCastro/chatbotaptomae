@@ -35,13 +35,13 @@ const listaPesquisa = [];
 
 const getCalendar = async () => {
   try {
-    const resp10 = await fetch("http://localhost:3000/10Pessoas");
+    const resp10 = await fetch("http://localhost:1000/10Pessoas");
     const data10 = await resp10.json();
 
-    const resp8 = await fetch("http://localhost:3000/8Pessoas");
+    const resp8 = await fetch("http://localhost:1000/8Pessoas");
     const data8 = await resp8.json();
 
-    const resp7 = await fetch("http://localhost:3000/7Pessoas");
+    const resp7 = await fetch("http://localhost:1000/7Pessoas");
     const data7 = await resp7.json();
 
     return [
